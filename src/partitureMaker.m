@@ -1,4 +1,6 @@
 function [tone partiture]= partitureMaker(fm,bitsQty,fileName)
     
-    partiture=wavread(fileName);
+    [audio fs bps]=wavread(fileName);
+    tone=max(fft(audio));
+    
 endfunction    
