@@ -1,7 +1,8 @@
 function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
-    
+    %partitura es un string
+    partiture="";
     % notas para hacer la partitura
-    pitches=['A-','A#/Bb','B-','C-','C#/Db','D-','D#/Eb','E-','F-','F#/Gb','G-','G#/Ab'];
+    pitches=["A-";"A#/Bb";"B-";"C-";"C#/Db";"D-";"D#/Eb";"E-";"F-";"F#/Gb";"G-";"G#/Ab"];
     % frecuencais
     frequencies = [27.5000,29.1353,30.8677,32.7032,34.6479,36.7081,38.8909,41.2035,43.6536,46.2493,48.9995,51.9130;
                    55.0000,58.2705,61.7354,65.4064,69.2957,73.4162,77.7817,82.4069,87.3071,92.4986,97.9989,103.826;
@@ -29,19 +30,39 @@ function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
     % cantidad de periodos a analizar
     amountOfPeriods = floor(rows/period);
     for k=1:amountOfPeriods
-        % FFT dentro hace las validacioens necesarias 
+        % FFT dentro hace las validaciones necesarias 
         % para que sea % == 0 a una potencia de 2
         % se le pasa un array con todas las muestras que serian los x_{n}
-        toneFrequency = fft( [audio((((k-1)*period)+1):((k)*period))], exponent2ofPeriod );	
+        toneFrequency = abs(fft( [audio((((k-1)*period)+1):((k)*period))], exponent2ofPeriod ));
+        
         %toneFrecuency = ourFFT( [audio(((i-1)*period):(i*period))] );
+        
         % sumo los valores de fourier para cada valor
-        toneFrequency = sum(toneFrequency);
+        [toneFrequencyMax indexFreq] = max(toneFrequency);
+        toneFrequency= (indexFreq/period)*fs
+        
         
         % busca la frecuencia
-        [row col shouldTrue] = find(frequencies == toneFrequency);
+        [row col] = findPitch(frequencies,toneFrequency);
         
         % asocio la frecuencia a un string
-        % ni idea
+        partiture=cstrcat(partiture,[pitches(col,:)],[dec2base(row-1,10)]," ");
+        
     end
 
 end
+
+function [row col]= findPitch(frequencies,toneFreq)
+   [rows cols]=size(frequencies);
+    flag=true;
+    for i=1:(rows*cols-1)
+        
+        row=floor(i/rows)+1;
+        col=mod(i,cols)+1;
+        if(toneFreq>frequencies(row,col))
+            
+            return;
+        end
+        
+    end
+end    
