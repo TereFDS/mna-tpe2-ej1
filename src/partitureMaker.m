@@ -20,7 +20,7 @@ function [partiture]= partitureMaker(fm,bitsQty,fileName)
         % FFT dentro hace las validacioens necesarias 
         % para que sea % == 0 a una potencia de 2
         % se le pasa un array con todas las muestras que serian los x_{n}
-        toneFrequency = fft( [audio(((i-1)*period):(i*period))] );	
+        toneFrequency = fft( [audio(((i-1)*period):(i*period))]' );	
         %toneFrecuency = ourFFT( [audio(((i-1)*period):(i*period))] );
         % busca la frecuencia
         [row col shouldTrue] = find(frequencies==toneFrecuency);
