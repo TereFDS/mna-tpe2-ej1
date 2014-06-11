@@ -16,16 +16,13 @@ function [partiture]= partitureMaker(fm,bitsQty,fileName)
     % cantidad de muestras del audio esta en rows
     [rows cols] = size(audio);
     
-    for i=1:period:(rows/period)
-        % FFT dentro hace las validacioens necesarias 
-        % para que sea % == 0 a una potencia de 2
-        % se le pasa un array con todas las muestras que serian los x_{n}
+    for i=1:period:rows
+        %FFT dentro hace las validacioens necesarias 
+        %para que sea % == 0 a una potencia de 2
+        %se le pasa un array con todas las muestras que serian los x_{n}
         toneFrequency = fft( [audio(((i-1)*period):(i*period))] );	
         %toneFrecuency = ourFFT( [audio(((i-1)*period):(i*period))] );
-        % busca la frecuencia
-        [row col shouldTrue] = find(frequencies==toneFrecuency);
-        % asocio la frecuencia a un string
-        % ni idea
+        [row col shouldT] = find(frequencies==toneFrecuency);
     end
 
 end
