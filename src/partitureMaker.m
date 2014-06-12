@@ -2,7 +2,7 @@ function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
     %partitura es un string
     partiture="";
     % notas para hacer la partitura
-    pitches=["A-";"A#/Bb";"B-";"C-";"C#/Db";"D-";"D#/Eb";"E-";"F-";"F#/Gb";"G-";"G#/Ab"];
+    pitches=["A-";"Bb";"B-";"C-";"C#";"D-";"Eb";"E-";"F-";"F#";"G-";"Ab"];
     % frecuencais
     frequencies = [27.5000,29.1353,30.8677,32.7032,34.6479,36.7081,38.8909,41.2035,43.6536,46.2493,48.9995,51.9130;
                    55.0000,58.2705,61.7354,65.4064,69.2957,73.4162,77.7817,82.4069,87.3071,92.4986,97.9989,103.826;
@@ -39,14 +39,14 @@ function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
         
         % sumo los valores de fourier para cada valor
         [toneFrequencyMax indexFreq] = max(toneFrequency(1:(period/2+1)));
-        toneFrequency= (indexFreq/period)*fs
+        toneFrequency= (indexFreq/period)*fs;
         
         
         % busca la frecuencia
-        [row col] = findPitch(frequencies,toneFrequency)
+        [row col] = findPitch(frequencies,toneFrequency);
         
         % asocio la frecuencia a un string
-        partiture=cstrcat(partiture,[pitches(col,:)],[dec2base(row-1,10)]," ");
+        partiture=cstrcat(partiture,[pitches(col,:)],[dec2base(row-1,10)]);
         
     end
 
@@ -54,14 +54,26 @@ end
 
 function [row col]= findPitch(frequencies,toneFreq)
    [rows cols]=size(frequencies);
-    flag=true;
     for i=1:(rows*cols-1)
-        
-        row=floor(i/rows)+1;
+        row=floor(i/cols)+1;
         col=mod(i,cols)+1;
-        if(toneFreq>frequencies(row,col))
-            return;
+        if(toneFreq<frequencies(row,col))
+                
+	    rowAuxi=floor((i-1)/cols)+1;
+	    colAuxi=mod(i-1,cols)+1;
+	    diff=(frequencies(row,col)-frequencies(rowAuxi,colAuxi))/2;
+	    frequencies(rowAuxi,colAuxi)+diff;
+	    if(toneFreq<frequencies(rowAuxi,colAuxi)+diff)
+	     row=rowAuxi;
+	     col=colAuxi;
+	    end
+	    
+	    return;
         end
         
     end
+    
+    %si se llega aca, quiere decir que la tonefrequency es mas alta que la nota maxima
+    row=8;  %fila en donde esta la nota mas alta
+    col=4;  %columna en donde esta la nota mas alta
 end    
