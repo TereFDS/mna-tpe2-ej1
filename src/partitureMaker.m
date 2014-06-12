@@ -39,14 +39,24 @@ function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
         
         % sumo los valores de fourier para cada valor
         [toneFrequencyMax indexFreq] = max(toneFrequency(1:(period/2+1)));
-        toneFrequency= (indexFreq/period)*fs;
+        toneFrequency= ((indexFreq-1)/period)*fs;
+        if(toneFrequency==0)
+            partiture=cstrcat(partiture,"S-",[dec2base(0,10)]);
+        else
+            % busca la frecuencia
+            [row col] = findPitch(frequencies,toneFrequency);
+        
+            % asocio la frecuencia a un string
+            
+            if(col<4)
+                octave=row-1;
+              else
+                octave=row;
+            end    
+            partiture=cstrcat(partiture,[pitches(col,:)],[dec2base(octave,10)]);
+        end    
         
         
-        % busca la frecuencia
-        [row col] = findPitch(frequencies,toneFrequency);
-        
-        % asocio la frecuencia a un string
-        partiture=cstrcat(partiture,[pitches(col,:)],[dec2base(row-1,10)]);
         
     end
 
@@ -54,6 +64,7 @@ end
 
 function [row col]= findPitch(frequencies,toneFreq)
    [rows cols]=size(frequencies);
+    
     for i=1:(rows*cols-1)
         row=floor(i/cols)+1;
         col=mod(i,cols)+1;
