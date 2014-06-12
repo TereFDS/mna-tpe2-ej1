@@ -1,7 +1,7 @@
 
 
 function prueba()
-Fs1 = 44100; %Set Sampling Frequency
+Fs1 = 11025; %Set Sampling Frequency
 Fr = Fs1; %Set Reconstruction Frequency
 Fs = Fs1; % The multiple of the sampling frequency to be used
 T = 1/Fs; %Sampling Period
@@ -80,6 +80,6 @@ superoct = [octm2 octm1 oct0 oct1 oct2];
 
 polytest1 = [C(0,4)+ E(1,4) C(0, 2) C(0,4)+ E(1,4) C(0, 2) C(0,4)+ F(1,4) C(0, 2) C(0,4)+ D(1,4)];
 polytest = [polytest1 polytest1 polytest1 C(0,8) + C(-1,8)];
-wavwrite((0.5*jbells)',Fr,16,"jinglebells.wav");
+wavwrite((0.5*jbells)',Fr,16,"jinglebells2.wav");
 
 end
