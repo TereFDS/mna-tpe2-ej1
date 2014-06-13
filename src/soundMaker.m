@@ -12,10 +12,19 @@ function z = soundMaker (partiture, fps,bps,name)
     
     toneFrequencies=parseNotes(frequencies,partiture);
     toneFrequenciesQty=size(toneFrequencies)(1);
+    toneAuxi=-1;
+    L=0;
+    z=[];
+    j=1;
     for i=1:toneFrequenciesQty
-        
-        
-        
+        if(toneFrequencies(i)!=toneAuxi)
+            z(j)=makeSound(toneAuxi,L,period,fs);
+            j=j+1;
+            toneAuxi=toneFrequencies(i);
+            L=1;    
+        else
+           L=L+1; 
+        end
     end    
     
     
