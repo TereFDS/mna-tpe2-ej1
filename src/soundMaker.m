@@ -39,7 +39,7 @@ function z = soundMaker (partiture, fps,bps,period,name)
     
     %z=reshape(z,1,toneFrequenciesQty*size(z)(2));
     
-    wavwrite(z',fps,bps,name);
+    wavwrite(2*z',fps,bps,name);
     
     
     
@@ -115,6 +115,9 @@ function tone=makeSound(toneFrequency,L,period,Fs)
     n = @(L) 1:L*N; %the array, n, takes an integer multiplier, L, that can reduce or increase the duration of a note, i.e. 1/2 note, 1/4 note, etc
     
     tone = sin(2*pi*toneFrequency*T*n(L)); %standard note at fund. freq.
+    
+    
+    
     
     
 end    
