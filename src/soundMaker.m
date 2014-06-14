@@ -21,11 +21,12 @@ function z = soundMaker (partiture, fps,bps,period,name)
     for i=2:toneFrequenciesQty
         if(toneFrequencies(i)!=toneAuxi)
             %auxi=makeSound(toneAuxi,L,period,fps);
+            
             z=[z makeSound(toneAuxi,L,period,fps,previousTone)];
             
             j=j+1;
             
-            previousTone=toneAuxi;
+            previousTone=z(end);
             toneAuxi=toneFrequencies(i);
             
             L=1;    
@@ -117,10 +118,11 @@ function tone=makeSound(toneFrequency,L,period,Fs,previousTone)
     T = 1/Fs; %Sampling Period
     N = (Fs/1000)*period; % Number of samples to achieve desired duration
     n = @(L) 1:L*N; %the array, n, takes an integer multiplier, L, that can reduce or increase the duration of a note, i.e. 1/2 note, 1/4 note, etc
-    array=n(L)
-    connect=floor(length(array)/8);
+    array=n(L);
+    connect=floor(length(array)/12);
     tone = sin(2*pi*toneFrequency*T*array(connect:end)); %standard note at fund. freq.
-    tone=[linspace(0,tone(1)) tone];
+    auxi=linspace(0,tone(1));
+    tone=[auxi tone];
     
     
 end    
