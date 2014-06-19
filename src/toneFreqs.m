@@ -13,7 +13,7 @@ function [toneFrequencies] = toneFreqs(frameTime, bq, fileName)
     % el periodo esta dado por el tiempo de 30milisegundos
     % => frecuencia de muestreo dividido el tiempo da el periodo
     % nuestra cuenta primero pasa a milisegundos y depues multiplica x30
-    period = floor((fs/1000)*framentTime);
+    period = floor((fs/1000)*frameTime);
     % get nearest exponent of 2
     exponent2ofPeriod = nextpow2(period)-1;
     exponent2ofPeriod = 2^exponent2ofPeriod;
