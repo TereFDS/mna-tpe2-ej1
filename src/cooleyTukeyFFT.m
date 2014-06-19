@@ -11,4 +11,5 @@ function X = cooleyTukeyFFT(x,N)
         X(k) = t + exp(-2*pi*1i*(k-1)/N) .* X(k+(N/2));
         X(k+N/2) = t - exp(-2*pi*1i*(k-1)/N) .* X(k+(N/2)); 
     end
+    X = X';
 end

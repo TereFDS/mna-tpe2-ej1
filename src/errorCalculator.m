@@ -1,9 +1,4 @@
-function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
-    %partitura es un string
-    partiture="";
-    % notas para hacer la partitura
-    pitches=["A-";"Bb";"B-";"C-";"C#";"D-";"Eb";"E-";"F-";"F#";"G-";"Ab"];
-    % frecuencais
+function [toneFrequencies] = toneFreqs(frameTime, bq, fileName)
     frequencies = [27.5000,29.1353,30.8677,32.7032,34.6479,36.7081,38.8909,41.2035,43.6536,46.2493,48.9995,51.9130;
                    55.0000,58.2705,61.7354,65.4064,69.2957,73.4162,77.7817,82.4069,87.3071,92.4986,97.9989,103.826;
                    110.000,116.541,123.471,130.813,138.591,146.832,155.563,164.814,174.614,184.997,195.998,207.652;
@@ -13,9 +8,6 @@ function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
                    1760.00,1864.66,1975.53,2093.00,2217.46,2349.32,2489.02,2637.02,2793.83,2959.96,3135.96,3322.44;
                    3520.00,3729.31,3951.07,4186.01,-1     ,-1     ,-1     ,-1     ,-1     ,-1     ,-1     ,-1      ];
              
-             
-    
-    %lectura archivo
     [audio fs bps] = wavread(fileName);
     
     % el periodo esta dado por el tiempo de 30milisegundos
@@ -29,62 +21,24 @@ function [partiture]= partitureMaker(framentTime,bitsQty,fileName)
     [rows cols] = size(audio);
     % cantidad de periodos a analizar
     amountOfPeriods = floor(rows/period);
+    toneFrequencies = zeros(1,amountOfPeriods);
+    
     for k=1:amountOfPeriods
         % FFT dentro hace las validaciones necesarias 
         % para que sea % == 0 a una potencia de 2
         % se le pasa un array con todas las muestras que serian los x_{n}
         toneFrequency = abs(cooleyTukeyFFT( [audio((((k-1)*period)+1):((k)*period))], exponent2ofPeriod ));
-        
-        %toneFrecuency = ourFFT( [audio(((i-1)*period):(i*period))] );
-        
         % sumo los valores de fourier para cada valor
         [toneFrequencyMax indexFreq] = max(toneFrequency(1:(period/2+1)));
         toneFrequency= ((indexFreq-1)/period)*fs;
-        if(toneFrequency==0)
-            partiture=cstrcat(partiture,"S-",[dec2base(0,10)]);
-        else
-            % busca la frecuencia
-            [row col] = findPitch(frequencies,toneFrequency);
-        
-            % asocio la frecuencia a un string
-            
-            if(col<4)
-                octave=row-1;
-              else
-                octave=row;
-            end    
-            partiture=cstrcat(partiture,[pitches(col,:)],[dec2base(octave,10)]);
-        end    
-        
-        
-        
+        toneFrequencies(1,k) = toneFrequency;
     end
 
 end
 
-function [row col]= findPitch(frequencies,toneFreq)
-   [rows cols]=size(frequencies);
-    
-    for i=1:(rows*cols-1)
-        row=floor(i/cols)+1;
-        col=mod(i,cols)+1;
-        if(toneFreq<frequencies(row,col))
-                
-	    rowAuxi=floor((i-1)/cols)+1;
-	    colAuxi=mod(i-1,cols)+1;
-	    diff=(frequencies(row,col)-frequencies(rowAuxi,colAuxi))/2;
-	    frequencies(rowAuxi,colAuxi)+diff;
-	    if(toneFreq<frequencies(rowAuxi,colAuxi)+diff)
-	     row=rowAuxi;
-	     col=colAuxi;
-	    end
-	    
-	    return;
-        end
-        
-    end
-    
-    %si se llega aca, quiere decir que la tonefrequency es mas alta que la nota maxima
-    row=8;  %fila en donde esta la nota mas alta
-    col=4;  %columna en donde esta la nota mas alta
-end    
+function [error] = calculateError(realWavFile, generatedWavFile)
+    tfqR = toneFreqs(30,1,realWavFile);
+    tfqG = toneFreqs(30,1,generatedWavFile);
+    diff = abs(tfqR-tfqG).^2;
+    squareError = sum(diff(:))/numel(X)
+end
